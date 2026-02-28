@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     git \
-    && docker-php-ext-install pdo pdo_pgsql pgsql mbstring zip exif pcntl bcmath \
+    && docker-php-ext-install pdo pdo_pgsql mbstring zip bcmath \
     && a2enmod rewrite \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -18,6 +18,9 @@ WORKDIR /var/www/html
 
 # Copy app
 COPY . .
+
+# Create .env (values from Render env vars at runtime)
+RUN cp .env.example .env 2>/dev/null || true
 
 # Install PHP deps
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
