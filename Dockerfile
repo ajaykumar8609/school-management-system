@@ -20,8 +20,11 @@ WORKDIR /var/www/html
 # Copy app
 COPY . .
 
-# Create .env (values from Render env vars at runtime)
-RUN cp .env.example .env 2>/dev/null || true
+# Create .env and fix permissions
+RUN cp .env.example .env 2>/dev/null || true \
+    && mkdir -p storage/framework/{sessions,views,cache} storage/logs \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
 # Install PHP deps
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
@@ -32,7 +35,13 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
+# Fix tempnam() - set PHP sys_temp_dir to writable Laravel storage
+COPY docker/php-temp.ini /usr/local/etc/php/conf.d/99-temp-dir.ini
+
 ENV APP_ENV production
 ENV APP_DEBUG false
 
-CMD php artisan migrate --force 2>/dev/null || true && apache2-foreground
+CMD php artisan config:clear 2>/dev/null || true && \
+    php artisan migrate --force 2>/dev/null || true && \
+    php artisan config:cache 2>/dev/null || true && \
+    apache2-foreground
