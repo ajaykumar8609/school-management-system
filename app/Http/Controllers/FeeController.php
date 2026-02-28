@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Models\Fee;
 use App\Models\FeePayment;
+use App\Models\SchoolClass;
 use Illuminate\Http\Request;
 
 class FeeController extends Controller
@@ -19,6 +20,9 @@ class FeeController extends Controller
                 ->orWhere('last_name', 'like', "%{$s}%")
                 ->orWhere('roll_no', 'like', "%{$s}%"));
         }
+        if ($request->filled('class_id')) {
+            $query->where('class_id', $request->class_id);
+        }
 
         $students = $query->orderBy('first_name')->paginate($request->get('per_page', 15));
 
@@ -31,7 +35,27 @@ class FeeController extends Controller
             return $s;
         });
 
-        return view('fee.index', compact('students'));
+        $classes = SchoolClass::orderByClassOrder()->get();
+        return view('fee.index', compact('students', 'classes'));
+    }
+
+    public function setFee(Request $request)
+    {
+        $valid = $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'academic_year' => 'required|string|max:20',
+            'total_fee' => 'required|numeric|min:0',
+            'discount' => 'nullable|numeric|min:0',
+        ]);
+        $valid['discount'] = $valid['discount'] ?? 0;
+        $valid['final_amount'] = max(0, $valid['total_fee'] - $valid['discount']);
+
+        Fee::updateOrCreate(
+            ['student_id' => $valid['student_id'], 'academic_year' => $valid['academic_year']],
+            ['total_fee' => $valid['total_fee'], 'discount' => $valid['discount'], 'final_amount' => $valid['final_amount']]
+        );
+
+        return redirect()->back()->with('success', 'Fee set successfully.');
     }
 
     public function addPayment(Request $request)

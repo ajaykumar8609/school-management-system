@@ -33,6 +33,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     });
     Route::prefix('fee')->name('fee.')->group(function () {
         Route::get('/', [FeeController::class, 'index'])->name('index');
+        Route::post('/set-fee', [FeeController::class, 'setFee'])->name('set-fee');
         Route::post('/add-payment', [FeeController::class, 'addPayment'])->name('add-payment');
         Route::delete('/payment/{payment}', [FeeController::class, 'deletePayment'])->name('delete-payment');
     });
