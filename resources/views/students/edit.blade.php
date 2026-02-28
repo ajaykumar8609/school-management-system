@@ -124,10 +124,14 @@
     <div class="card">
         <h3 class="card-title">5. Photo</h3>
         @if($student->photo)
-        <img src="{{ asset('storage/' . $student->photo) }}" alt="" style="width:80px;height:80px;border-radius:8px;object-fit:cover;margin-bottom:12px;">
+        <img src="{{ asset('storage/' . $student->photo) }}" alt="" style="width:80px;height:80px;border-radius:8px;object-fit:cover;margin-bottom:12px;" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex';">
+        <span style="display:none;width:80px;height:80px;border-radius:8px;background:var(--gray-200);align-items:center;justify-content:center;font-weight:600;margin-bottom:12px;">{{ substr($student->first_name,0,1) }}</span>
         @endif
+        <div id="photo-preview-new" style="width:80px;height:80px;border-radius:8px;background:var(--gray-200);margin-bottom:8px;display:none;overflow:hidden;">
+            <img id="photo-preview-new-img" src="" alt="New" style="width:100%;height:100%;object-fit:cover;">
+        </div>
         <div class="form-group">
-            <input type="file" name="photo" accept="image/*" class="form-control">
+            <input type="file" name="photo" id="photo-input-edit" accept="image/*" class="form-control">
         </div>
         <div class="form-group">
             <label style="display:flex;align-items:center;gap:8px;">
@@ -145,6 +149,20 @@
 </form>
 @push('scripts')
 <script>
+(function() {
+    var pi = document.getElementById('photo-input-edit');
+    var pp = document.getElementById('photo-preview-new');
+    var ppi = document.getElementById('photo-preview-new-img');
+    if (pi && pp && ppi) {
+        pi.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                var r = new FileReader();
+                r.onload = function() { ppi.src = r.result; pp.style.display = 'block'; };
+                r.readAsDataURL(this.files[0]);
+            } else { pp.style.display = 'none'; }
+        });
+    }
+})();
 (function() {
     var classSelect = document.getElementById('class_id');
     var sectionSelect = document.getElementById('section_id');

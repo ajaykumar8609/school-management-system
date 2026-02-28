@@ -65,7 +65,10 @@
             <tr>
                 <td>
                     @if($s->photo)
-                    <img src="{{ asset('storage/' . $s->photo) }}" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                    <span style="display:inline-flex;width:40px;height:40px;border-radius:50%;overflow:hidden;background:var(--gray-200);align-items:center;justify-content:center;font-weight:600;">
+                        <img src="{{ asset('storage/' . $s->photo) }}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <span style="display:none;">{{ substr($s->first_name,0,1) }}</span>
+                    </span>
                     @else
                     <div style="width:40px;height:40px;border-radius:50%;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-weight:600;">{{ substr($s->first_name,0,1) }}</div>
                     @endif

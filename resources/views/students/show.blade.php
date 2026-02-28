@@ -7,7 +7,8 @@
 <div class="card" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
     <div>
         @if($student->photo)
-        <img src="{{ asset('storage/' . $student->photo) }}" alt="" style="width:100px;height:100px;border-radius:12px;object-fit:cover;">
+        <img src="{{ asset('storage/' . $student->photo) }}" alt="" style="width:100px;height:100px;border-radius:12px;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex';">
+        <span style="display:none;width:100px;height:100px;border-radius:12px;background:var(--gray-200);align-items:center;justify-content:center;font-weight:600;font-size:2rem;">{{ substr($student->first_name,0,1) }}</span>
         @else
         <div style="width:100px;height:100px;border-radius:12px;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:600;">{{ substr($student->first_name,0,1) }}</div>
         @endif

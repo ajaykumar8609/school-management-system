@@ -129,7 +129,10 @@
     <div class="card">
         <h3 class="card-title">5. Photo Upload</h3>
         <div class="form-group">
-            <input type="file" name="photo" accept="image/*" class="form-control">
+            <div id="photo-preview" style="width:80px;height:80px;border-radius:8px;background:var(--gray-200);margin-bottom:8px;display:none;overflow:hidden;">
+                <img id="photo-preview-img" src="" alt="Preview" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+            <input type="file" name="photo" id="photo-input" accept="image/*" class="form-control">
         </div>
         <div class="form-group">
             <label style="display:flex;align-items:center;gap:8px;">
@@ -148,6 +151,20 @@
 
 @push('scripts')
 <script>
+(function() {
+    var photoInput = document.getElementById('photo-input');
+    var photoPreview = document.getElementById('photo-preview');
+    var photoPreviewImg = document.getElementById('photo-preview-img');
+    if (photoInput) {
+        photoInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                var r = new FileReader();
+                r.onload = function() { photoPreviewImg.src = r.result; photoPreview.style.display = 'block'; };
+                r.readAsDataURL(this.files[0]);
+            } else { photoPreview.style.display = 'none'; }
+        });
+    }
+})();
 (function() {
     var classSelect = document.getElementById('class_id');
     var sectionSelect = document.getElementById('section_id');

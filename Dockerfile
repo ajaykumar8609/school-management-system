@@ -22,7 +22,7 @@ COPY . .
 
 # Create .env and fix permissions
 RUN cp .env.example .env 2>/dev/null || true \
-    && mkdir -p storage/framework/{sessions,views,cache} storage/logs \
+    && mkdir -p storage/framework/{sessions,views,cache} storage/logs storage/app/public \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
@@ -42,6 +42,7 @@ ENV APP_ENV production
 ENV APP_DEBUG false
 
 CMD php artisan config:clear 2>/dev/null || true && \
+    php artisan storage:link 2>/dev/null || true && \
     php artisan migrate --force 2>/dev/null || true && \
     php artisan db:seed --class=AdminSeeder 2>/dev/null || true && \
     php artisan db:seed --class=SchoolSeeder 2>/dev/null || true && \
