@@ -105,6 +105,8 @@ return [
         ),
     ],
 
+    'setup_key' => env('APP_SETUP_KEY', 'school-setup-2025'),
+
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver
