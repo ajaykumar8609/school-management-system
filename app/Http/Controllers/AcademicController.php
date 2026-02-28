@@ -14,7 +14,7 @@ class AcademicController extends Controller
 {
     public function index(Request $request)
     {
-        $classes = SchoolClass::orderByRaw("FIELD(class_name, 'Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12')")->get();
+        $classes = SchoolClass::orderByClassOrder()->get();
         $exams = Exam::orderBy('start_date', 'desc')->get();
 
         $classId = $request->get('class_id');

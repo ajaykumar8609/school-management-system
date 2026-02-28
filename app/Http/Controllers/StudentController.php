@@ -43,7 +43,7 @@ class StudentController extends Controller
         $query->with(['fees', 'feePayments']);
         $students = $query->orderBy('first_name')->paginate($request->get('per_page', 15));
 
-        $classes = SchoolClass::orderByRaw("FIELD(class_name, 'Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12')")->get();
+        $classes = SchoolClass::orderByClassOrder()->get();
         $sections = Section::onlyABC()->with('schoolClass')->orderBy('section_name')->get();
         return view('students.index', compact('students', 'classes', 'sections'));
     }
@@ -61,7 +61,7 @@ class StudentController extends Controller
 
     public function create()
     {
-        $classes = SchoolClass::orderByRaw("FIELD(class_name, 'Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12')")->get();
+        $classes = SchoolClass::orderByClassOrder()->get();
         $sections = Section::onlyABC()->with('schoolClass')->orderBy('section_name')->get();
         return view('students.create', compact('classes', 'sections'));
     }
@@ -108,7 +108,7 @@ class StudentController extends Controller
 
     public function edit(Student $student)
     {
-        $classes = SchoolClass::orderByRaw("FIELD(class_name, 'Nursery', 'LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12')")->get();
+        $classes = SchoolClass::orderByClassOrder()->get();
         $sections = Section::onlyABC()->with('schoolClass')->orderBy('section_name')->get();
         return view('students.edit', compact('student', 'classes', 'sections'));
     }
