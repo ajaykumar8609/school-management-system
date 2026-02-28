@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: school-management
+    runtime: php
+    plan: free
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+      php artisan key:generate --force
+      php artisan storage:link
+    startCommand: vendor/bin/heroku-php-apache2 public/
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stderr
+  - type: pserv
+    name: school-management-db
+    plan: free
+    ipAllowList: []
