@@ -43,5 +43,8 @@ ENV APP_DEBUG false
 
 CMD php artisan config:clear 2>/dev/null || true && \
     php artisan migrate --force 2>/dev/null || true && \
+    php artisan db:seed --class=AdminSeeder 2>/dev/null || true && \
+    php artisan db:seed --class=SchoolSeeder 2>/dev/null || true && \
+    php artisan db:seed --class=DemoStudentsSeeder 2>/dev/null || true && \
     php artisan config:cache 2>/dev/null || true && \
     apache2-foreground
